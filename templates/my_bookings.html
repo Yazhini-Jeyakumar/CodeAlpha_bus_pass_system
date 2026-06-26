@@ -1,0 +1,42 @@
+{% extends "base.html" %}
+{% block title %}My Bookings{% endblock %}
+{% block content %}
+
+<h5 class="mb-0">My Bookings</h5>
+<div class="divider-amber"></div>
+
+{% if not bookings %}
+    <p class="text-muted">You haven't booked any tickets yet. <a href="{{ url_for('home') }}">Browse routes</a>.</p>
+{% endif %}
+
+<div class="row g-3">
+    {% for b in bookings %}
+    <div class="col-md-6">
+        <div class="card route-card p-3">
+            <div class="d-flex justify-content-between align-items-start">
+                <div>
+                    <div class="route-code">BUS-{{ "%03d"|format(b.route_id) }}</div>
+                    <h6 class="mb-1">{{ b.source }} <i class="fa-solid fa-arrow-right-long small text-muted"></i> {{ b.destination }}</h6>
+                </div>
+                <span class="status-pill status-{{ b.status }}">{{ b.status.replace('_',' ') }}</span>
+            </div>
+            <p class="mb-1 small text-muted">{{ b.bus_name }} &middot; {{ b.departure_time }}</p>
+            <p class="mb-1 small">Seats: <span class="mono">{{ b.seat_numbers }}</span> &middot; Fare: <span class="mono">₹{{ "%.0f"|format(b.fare_charged) }}</span></p>
+            <div class="d-flex gap-2 mt-2">
+                {% if b.status == 'PENDING_PAYMENT' %}
+                    <a href="{{ url_for('checkout', ticket_uid=b.ticket_uid) }}" class="btn btn-sm btn-amber">Complete Payment</a>
+                {% else %}
+                    <a href="{{ url_for('ticket', ticket_uid=b.ticket_uid) }}" class="btn btn-sm btn-primary">View Ticket</a>
+                {% endif %}
+                {% if b.status in ['CONFIRMED', 'PENDING_PAYMENT'] %}
+                <form method="POST" action="{{ url_for('cancel', ticket_uid=b.ticket_uid) }}" onsubmit="return confirm('Cancel this ticket?');">
+                    <button type="submit" class="btn btn-sm btn-outline-danger">Cancel</button>
+                </form>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+    {% endfor %}
+</div>
+
+{% endblock %}

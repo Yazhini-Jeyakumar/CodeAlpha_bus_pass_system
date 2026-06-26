@@ -1,0 +1,59 @@
+{% extends "base.html" %}
+{% block title %}Browse Routes{% endblock %}
+{% block content %}
+
+<div class="hero">
+    <div class="eyebrow">ROUTEEASE / NETWORK STATUS: ONLINE</div>
+    <h1 class="mt-2">Book your seat. Skip the queue.</h1>
+    <p class="mb-0 fs-5" style="color:rgba(255,255,255,0.8);">
+        Pick a real seat, pay securely, get a single-use QR ticket that can't be copied or stolen.
+    </p>
+</div>
+
+<form method="GET" class="search-bar row g-2 align-items-end">
+    <div class="col-md-4">
+        <label class="form-label small text-muted mb-1">From</label>
+        <input list="cityList" name="source" class="form-control" placeholder="Any city"
+               value="{{ search_source }}">
+    </div>
+    <div class="col-md-4">
+        <label class="form-label small text-muted mb-1">To</label>
+        <input list="cityList" name="destination" class="form-control" placeholder="Any city"
+               value="{{ search_destination }}">
+    </div>
+    <datalist id="cityList">
+        {% for c in cities %}<option value="{{ c }}">{% endfor %}
+    </datalist>
+    <div class="col-md-3">
+        <button type="submit" class="btn btn-primary w-100"><i class="fa-solid fa-magnifying-glass"></i> Search</button>
+    </div>
+    <div class="col-md-1">
+        <a href="{{ url_for('home') }}" class="btn btn-outline-secondary w-100" title="Clear"><i class="fa-solid fa-xmark"></i></a>
+    </div>
+</form>
+
+<h5 class="mb-0">Available Routes</h5>
+<div class="divider-amber"></div>
+
+<div class="row g-4">
+    {% for route in routes %}
+    <div class="col-md-6 col-lg-4">
+        <div class="card route-card h-100">
+            <div class="card-body">
+                <div class="route-code mb-1">BUS-{{ "%03d"|format(route.id) }}</div>
+                <h5 class="card-title">{{ route.source }} <i class="fa-solid fa-arrow-right-long text-muted small"></i> {{ route.destination }}</h5>
+                <p class="card-text mb-1"><i class="fa-solid fa-bus text-muted"></i> {{ route.bus_name }}</p>
+                <p class="card-text mb-3"><i class="fa-regular fa-clock text-muted"></i> Departs {{ route.departure_time }}</p>
+                <div class="d-flex justify-content-between align-items-center">
+                    <span class="fare-badge">₹{{ "%.0f"|format(route.fare) }}</span>
+                    <a href="{{ url_for('book', route_id=route.id) }}" class="btn btn-primary btn-sm">Select Seats</a>
+                </div>
+            </div>
+        </div>
+    </div>
+    {% else %}
+    <p class="text-muted">No routes match your search. <a href="{{ url_for('home') }}">Clear filters</a>.</p>
+    {% endfor %}
+</div>
+
+{% endblock %}

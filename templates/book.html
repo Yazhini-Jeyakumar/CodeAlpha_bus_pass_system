@@ -1,0 +1,97 @@
+{% extends "base.html" %}
+{% block title %}Select Seats{% endblock %}
+{% block content %}
+<div class="row justify-content-center g-4">
+    <div class="col-lg-6">
+        <div class="card route-card p-4">
+            <div class="route-code mb-1">BUS-{{ "%03d"|format(route.id) }}</div>
+            <h4 class="mb-1">{{ route.source }} <i class="fa-solid fa-arrow-right-long text-muted small"></i> {{ route.destination }}</h4>
+            <p class="text-muted mb-3">{{ route.bus_name }} &middot; Departs {{ route.departure_time }}</p>
+
+            <div class="alert alert-light border d-flex justify-content-between py-2 mb-4">
+                <span>Fare per seat</span>
+                <strong class="mono">₹{{ "%.0f"|format(route.fare) }}</strong>
+            </div>
+
+            <p class="small text-muted mb-2">Tap seats to select (max 6). Grey seats are already booked.</p>
+            <div class="seat-map mb-2" id="seatMap">
+                {% for seat in all_seats %}
+                    <div class="seat {% if seat in taken_seats %}seat-taken{% endif %}"
+                         data-seat="{{ seat }}">{{ seat }}</div>
+                {% endfor %}
+            </div>
+
+            <div class="d-flex gap-3 small text-muted mt-3">
+                <span><span class="d-inline-block" style="width:12px;height:12px;background:#fff;border:1.5px solid #e7e2d4;border-radius:3px;"></span> Available</span>
+                <span><span class="d-inline-block" style="width:12px;height:12px;background:#f5a623;border-radius:3px;"></span> Selected</span>
+                <span><span class="d-inline-block" style="width:12px;height:12px;background:#ece9e0;border-radius:3px;"></span> Taken</span>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-lg-5">
+        <div class="card route-card p-4">
+            <h6 class="mb-3">Passenger Details</h6>
+            <form method="POST" id="bookForm">
+                <div class="mb-3">
+                    <label class="form-label">Passenger Name</label>
+                    <input type="text" name="passenger_name" class="form-control" required value="{{ session.user_name }}">
+                </div>
+
+                <div id="seatInputs"></div>
+
+                <div class="alert alert-light border d-flex justify-content-between">
+                    <span>Selected seats</span>
+                    <strong class="mono" id="selectedSeatsLabel">none</strong>
+                </div>
+                <div class="alert alert-light border d-flex justify-content-between">
+                    <span>Total fare</span>
+                    <strong class="mono" id="totalFareLabel">₹0</strong>
+                </div>
+
+                <button type="submit" class="btn btn-amber w-100" id="continueBtn" disabled>
+                    <i class="fa-solid fa-arrow-right"></i> Continue to Payment
+                </button>
+            </form>
+        </div>
+    </div>
+</div>
+
+<script>
+const fare = {{ route.fare }};
+const maxSeats = 6;
+let selected = [];
+
+document.querySelectorAll('.seat:not(.seat-taken)').forEach(el => {
+    el.addEventListener('click', () => {
+        const seat = el.dataset.seat;
+        if (selected.includes(seat)) {
+            selected = selected.filter(s => s !== seat);
+            el.classList.remove('seat-selected');
+        } else {
+            if (selected.length >= maxSeats) return;
+            selected.push(seat);
+            el.classList.add('seat-selected');
+        }
+        updateSummary();
+    });
+});
+
+function updateSummary() {
+    document.getElementById('selectedSeatsLabel').textContent = selected.length ? selected.join(', ') : 'none';
+    document.getElementById('totalFareLabel').textContent = '₹' + (fare * selected.length).toFixed(0);
+    document.getElementById('continueBtn').disabled = selected.length === 0;
+
+    const container = document.getElementById('seatInputs');
+    container.innerHTML = '';
+    selected.forEach(s => {
+        const input = document.createElement('input');
+        input.type = 'hidden';
+        input.name = 'seats';
+        input.value = s;
+        container.appendChild(input);
+    });
+}
+</script>
+
+{% endblock %}

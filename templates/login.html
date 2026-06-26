@@ -1,0 +1,24 @@
+{% extends "base.html" %}
+{% block title %}Login{% endblock %}
+{% block content %}
+<div class="card auth-card p-4">
+    <h3 class="mb-1 text-center">Welcome Back</h3>
+    <div class="divider-amber mx-auto"></div>
+    <form method="POST">
+        <div class="mb-3">
+            <label class="form-label">Email</label>
+            <input type="email" name="email" class="form-control" required>
+        </div>
+        <div class="mb-3">
+            <label class="form-label">Password</label>
+            <input type="password" name="password" class="form-control" required>
+        </div>
+        <button type="submit" class="btn btn-primary w-100">Login</button>
+    </form>
+    <p class="text-center mt-3 mb-0">No account? <a href="{{ url_for('register') }}">Sign up</a></p>
+    <hr>
+    <p class="text-muted small text-center mb-0">
+        Admin demo login: <code>admin@buspass.com</code> / <code>admin123</code>
+    </p>
+</div>
+{% endblock %}

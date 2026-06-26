@@ -1,0 +1,57 @@
+{% extends "base.html" %}
+{% block title %}Your E-Ticket{% endblock %}
+{% block content %}
+
+<div class="row justify-content-center">
+    <div class="col-md-8">
+        <div class="ticket-card">
+            <div class="ticket-main">
+                <div class="d-flex justify-content-between align-items-start mb-2">
+                    <div>
+                        <div class="route-code">BUS-{{ "%03d"|format(b.route_id) }}</div>
+                        <h4 class="mb-1">{{ b.source }} <i class="fa-solid fa-arrow-right-long text-muted small"></i> {{ b.destination }}</h4>
+                        <p class="text-muted mb-0">{{ b.bus_name }} &middot; Departs {{ b.departure_time }}</p>
+                    </div>
+                    <span class="status-pill status-{{ b.status }}">{{ b.status.replace('_', ' ') }}</span>
+                </div>
+                <hr>
+                <div class="row">
+                    <div class="col-6">
+                        <p class="mb-1"><strong>Passenger</strong><br>{{ b.passenger_name }}</p>
+                    </div>
+                    <div class="col-6">
+                        <p class="mb-1"><strong>Seat(s)</strong><br><span class="mono">{{ b.seat_numbers }}</span></p>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-6">
+                        <p class="mb-1"><strong>Fare Paid</strong><br><span class="mono">₹{{ "%.0f"|format(b.fare_charged) }}</span></p>
+                    </div>
+                    <div class="col-6">
+                        <p class="mb-1"><strong>Booked At</strong><br>{{ b.booked_at }}</p>
+                    </div>
+                </div>
+
+                <a href="{{ url_for('ticket_pdf', ticket_uid=b.ticket_uid) }}" class="btn btn-outline-primary btn-sm mt-3">
+                    <i class="fa-solid fa-file-pdf"></i> Download PDF
+                </a>
+                <a href="{{ url_for('my_bookings') }}" class="btn btn-outline-secondary btn-sm mt-3">
+                    <i class="fa-solid fa-list"></i> All Bookings
+                </a>
+            </div>
+
+            <div class="ticket-stub">
+                <img src="{{ url_for('qr_image', filename=b.ticket_uid + '.png') }}" style="width:96px;height:96px;border-radius:6px;" alt="QR Code">
+                <p class="ticket-id-label mt-2 mb-0">{{ b.ticket_uid[:8] }}</p>
+            </div>
+        </div>
+
+        <p class="text-muted small mt-3">
+            <i class="fa-solid fa-shield-halved"></i>
+            This QR is single-use and tied to your booking record on the server.
+            It becomes invalid the moment it's scanned once or the ticket is cancelled.
+        </p>
+    </div>
+</div>
+
+{% endblock %}

@@ -1,0 +1,289 @@
+/* ============================================================
+   RouteEase — visual identity
+   Palette: midnight indigo + amber accent + warm paper background
+   Type: Poppins (display/UI) + JetBrains Mono (ticket IDs, seat codes, fares)
+   Signature element: perforated/torn-edge ticket card with amber stub
+   ============================================================ */
+
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&family=JetBrains+Mono:wght@500;600&display=swap');
+
+:root {
+    --ink: #161a2e;
+    --indigo: #1f2547;
+    --indigo-deep: #11142b;
+    --amber: #f5a623;
+    --amber-deep: #d6860a;
+    --paper: #f7f3ea;
+    --paper-card: #ffffff;
+    --muted: #6b7184;
+    --line: #e7e2d4;
+    --success: #1f9254;
+    --danger: #c0392b;
+}
+
+* { box-sizing: border-box; }
+
+body {
+    background-color: var(--paper);
+    font-family: 'Poppins', system-ui, sans-serif;
+    color: var(--ink);
+}
+
+.mono { font-family: 'JetBrains Mono', monospace; }
+
+/* ---------------- Navbar ---------------- */
+.custom-navbar {
+    background: var(--indigo-deep);
+    border-bottom: 3px solid var(--amber);
+}
+
+.custom-navbar .navbar-brand {
+    font-weight: 700;
+    letter-spacing: 0.02em;
+}
+
+.custom-navbar .navbar-brand i {
+    color: var(--amber);
+}
+
+.text-light-50 {
+    color: rgba(255,255,255,0.65) !important;
+}
+
+/* ---------------- Hero ---------------- */
+.hero {
+    background: var(--indigo-deep);
+    background-image:
+        repeating-linear-gradient(135deg, rgba(245,166,35,0.06) 0 2px, transparent 2px 26px);
+    color: #fff;
+    border-radius: 18px;
+    padding: 52px 36px;
+    margin-bottom: 28px;
+    position: relative;
+    overflow: hidden;
+}
+
+.hero h1 {
+    font-weight: 700;
+    letter-spacing: -0.01em;
+}
+
+.hero .eyebrow {
+    font-family: 'JetBrains Mono', monospace;
+    color: var(--amber);
+    letter-spacing: 0.12em;
+    font-size: 0.78rem;
+    text-transform: uppercase;
+}
+
+/* ---------------- Search bar ---------------- */
+.search-bar {
+    background: var(--paper-card);
+    border-radius: 14px;
+    padding: 18px;
+    box-shadow: 0 6px 20px rgba(22,26,46,0.08);
+    margin-bottom: 28px;
+    border: 1px solid var(--line);
+}
+
+/* ---------------- Route cards ---------------- */
+.route-card {
+    border: 1px solid var(--line);
+    border-radius: 14px;
+    background: var(--paper-card);
+    box-shadow: 0 3px 10px rgba(22,26,46,0.05);
+    transition: transform 0.18s ease, box-shadow 0.18s ease;
+}
+
+.route-card:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 10px 24px rgba(22,26,46,0.12);
+}
+
+.route-code {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.78rem;
+    color: var(--muted);
+    letter-spacing: 0.04em;
+}
+
+.fare-badge {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 1.15rem;
+    font-weight: 600;
+    color: var(--indigo);
+}
+
+.seats-left-pill {
+    font-size: 0.72rem;
+    font-weight: 600;
+    padding: 2px 10px;
+    border-radius: 999px;
+    background: #fff4e0;
+    color: var(--amber-deep);
+}
+
+/* ---------------- Seat map ---------------- */
+.seat-map {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 10px;
+    max-width: 420px;
+}
+
+.seat {
+    aspect-ratio: 1;
+    border: 1.5px solid var(--line);
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.85rem;
+    font-weight: 600;
+    cursor: pointer;
+    background: var(--paper-card);
+    color: var(--ink);
+    user-select: none;
+    transition: all 0.12s ease;
+}
+
+.seat:hover:not(.seat-taken) {
+    border-color: var(--amber);
+    transform: translateY(-2px);
+}
+
+.seat-selected {
+    background: var(--amber);
+    border-color: var(--amber-deep);
+    color: var(--indigo-deep);
+}
+
+.seat-taken {
+    background: #ece9e0;
+    color: #b3aea0;
+    border-color: #ece9e0;
+    cursor: not-allowed;
+}
+
+.seat-aisle-gap { width: 16px; }
+
+/* ---------------- Ticket card (signature element) ---------------- */
+.ticket-card {
+    border-radius: 0;
+    background: var(--paper-card);
+    position: relative;
+    box-shadow: 0 8px 28px rgba(22,26,46,0.12);
+    overflow: hidden;
+    display: flex;
+}
+
+.ticket-main {
+    flex: 1;
+    padding: 26px 24px;
+}
+
+.ticket-stub {
+    width: 150px;
+    background: var(--indigo-deep);
+    color: #fff;
+    padding: 24px 14px;
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+}
+
+.ticket-stub::before {
+    content: "";
+    position: absolute;
+    left: -10px;
+    top: 0;
+    bottom: 0;
+    width: 20px;
+    background-image: radial-gradient(circle, var(--paper) 6px, transparent 6.5px);
+    background-size: 20px 24px;
+    background-repeat: repeat-y;
+}
+
+.ticket-id-label {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.7rem;
+    color: var(--muted);
+    letter-spacing: 0.04em;
+}
+
+.status-pill {
+    padding: 4px 14px;
+    border-radius: 999px;
+    font-weight: 600;
+    font-size: 0.78rem;
+    letter-spacing: 0.02em;
+}
+
+.status-CONFIRMED { background:#e7f7ee; color:var(--success); }
+.status-USED { background:#eef0f5; color:#5a6470; }
+.status-CANCELLED { background:#fdecea; color:var(--danger); }
+.status-PENDING_PAYMENT { background:#fff4e0; color:var(--amber-deep); }
+
+/* ---------------- Auth ---------------- */
+.auth-card {
+    max-width: 420px;
+    margin: 40px auto;
+    border-radius: 16px;
+    border: 1px solid var(--line);
+    box-shadow: 0 10px 30px rgba(22,26,46,0.10);
+}
+
+/* ---------------- Buttons ---------------- */
+.btn-primary {
+    background: var(--indigo);
+    border-color: var(--indigo);
+}
+.btn-primary:hover {
+    background: var(--indigo-deep);
+    border-color: var(--indigo-deep);
+}
+.btn-amber {
+    background: var(--amber);
+    border-color: var(--amber-deep);
+    color: var(--indigo-deep);
+    font-weight: 600;
+}
+.btn-amber:hover {
+    background: var(--amber-deep);
+    color: #fff;
+}
+
+/* ---------------- Admin stat cards ---------------- */
+.stat-card {
+    border-radius: 14px;
+    border: 1px solid var(--line);
+    background: var(--paper-card);
+    padding: 18px;
+    text-align: center;
+}
+.stat-card h2 { font-family: 'JetBrains Mono', monospace; font-weight: 600; }
+.stat-label { font-size: 0.78rem; color: var(--muted); text-transform: uppercase; letter-spacing: 0.06em; }
+
+/* ---------------- Misc ---------------- */
+.divider-amber {
+    height: 3px;
+    width: 48px;
+    background: var(--amber);
+    border-radius: 2px;
+    margin: 6px 0 18px;
+}
+
+@media (max-width: 576px) {
+    .ticket-card { flex-direction: column; }
+    .ticket-stub { width: 100%; flex-direction: row; gap: 16px; }
+    .ticket-stub::before {
+        left: 0; top: -10px; bottom: auto; right: 0; width: auto; height: 20px;
+        background-image: radial-gradient(circle, var(--paper) 6px, transparent 6.5px);
+        background-size: 24px 20px;
+        background-repeat: repeat-x;
+    }
+}

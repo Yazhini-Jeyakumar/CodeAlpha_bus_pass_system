@@ -1,0 +1,127 @@
+{% extends "base.html" %}
+{% block title %}Admin Dashboard{% endblock %}
+{% block content %}
+
+<h5 class="mb-0"><i class="fa-solid fa-gauge"></i> Admin Dashboard</h5>
+<div class="divider-amber"></div>
+
+<div class="row g-3 mb-4">
+    <div class="col-6 col-md-3">
+        <div class="stat-card">
+            <div class="stat-label">Total Bookings</div>
+            <h2>{{ total_bookings }}</h2>
+        </div>
+    </div>
+    <div class="col-6 col-md-3">
+        <div class="stat-card">
+            <div class="stat-label">Revenue</div>
+            <h2>₹{{ "%.0f"|format(revenue) }}</h2>
+        </div>
+    </div>
+    <div class="col-6 col-md-3">
+        <div class="stat-card">
+            <div class="stat-label">Pending Payment</div>
+            <h2 style="color:#d6860a;">{{ pending_payments }}</h2>
+        </div>
+    </div>
+    <div class="col-6 col-md-3">
+        <div class="stat-card">
+            <div class="stat-label">Boarded (Used)</div>
+            <h2 style="color:#1f9254;">{{ used_count }}</h2>
+        </div>
+    </div>
+</div>
+
+<div class="row g-4">
+    <div class="col-lg-5">
+        <div class="card route-card p-3">
+            <h6 class="mb-3">Add New Route</h6>
+            <form method="POST" action="{{ url_for('add_route') }}">
+                <div class="row g-2">
+                    <div class="col-6"><input class="form-control form-control-sm" name="source" placeholder="Source" required></div>
+                    <div class="col-6"><input class="form-control form-control-sm" name="destination" placeholder="Destination" required></div>
+                    <div class="col-12"><input class="form-control form-control-sm" name="bus_name" placeholder="Bus Name" required></div>
+                    <div class="col-6"><input class="form-control form-control-sm" name="departure_time" placeholder="e.g. 06:00" required></div>
+                    <div class="col-6"><input type="number" class="form-control form-control-sm" name="total_seats" placeholder="Total Seats" required></div>
+                    <div class="col-12"><input type="number" step="0.01" class="form-control form-control-sm" name="fare" placeholder="Fare (₹) per seat" required></div>
+                </div>
+                <button class="btn btn-primary btn-sm w-100 mt-3" type="submit">Add Route</button>
+            </form>
+        </div>
+
+        <div class="card route-card p-3 mt-3">
+            <h6 class="mb-3">Existing Routes</h6>
+            <div class="table-responsive">
+                <table class="table table-sm align-middle">
+                    <thead><tr><th>Route</th><th>Fare</th><th>Seats</th><th></th></tr></thead>
+                    <tbody>
+                    {% for r in routes %}
+                        <tr>
+                            <td>{{ r.source }} → {{ r.destination }}</td>
+                            <td class="mono">₹{{ "%.0f"|format(r.fare) }}</td>
+                            <td>{{ r.total_seats }}</td>
+                            <td>
+                                <form method="POST" action="{{ url_for('delete_route', route_id=r.id) }}" onsubmit="return confirm('Delete this route?');">
+                                    <button class="btn btn-sm btn-outline-danger"><i class="fa-solid fa-trash"></i></button>
+                                </form>
+                            </td>
+                        </tr>
+                    {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-lg-7">
+        <div class="card route-card p-3">
+            <h6 class="mb-3">Bookings</h6>
+
+            <form method="GET" class="row g-2 mb-3">
+                <div class="col-md-4">
+                    <select name="status" class="form-select form-select-sm">
+                        <option value="">All statuses</option>
+                        {% for s in ['PENDING_PAYMENT','CONFIRMED','USED','CANCELLED'] %}
+                        <option value="{{ s }}" {% if status_filter == s %}selected{% endif %}>{{ s.replace('_',' ') }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+                <div class="col-md-4">
+                    <select name="route_id" class="form-select form-select-sm">
+                        <option value="">All routes</option>
+                        {% for r in routes %}
+                        <option value="{{ r.id }}" {% if route_filter == r.id|string %}selected{% endif %}>{{ r.source }} → {{ r.destination }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+                <div class="col-md-3">
+                    <input type="date" name="date" class="form-control form-control-sm" value="{{ date_filter }}">
+                </div>
+                <div class="col-md-1">
+                    <button class="btn btn-sm btn-primary w-100" type="submit"><i class="fa-solid fa-filter"></i></button>
+                </div>
+            </form>
+
+            <div class="table-responsive">
+                <table class="table table-sm align-middle">
+                    <thead><tr><th>User</th><th>Route</th><th>Seats</th><th>Fare</th><th>Status</th></tr></thead>
+                    <tbody>
+                    {% for b in bookings %}
+                        <tr>
+                            <td>{{ b.user_name }}</td>
+                            <td>{{ b.source }} → {{ b.destination }}</td>
+                            <td class="mono">{{ b.seat_numbers }}</td>
+                            <td class="mono">₹{{ "%.0f"|format(b.fare_charged) }}</td>
+                            <td><span class="status-pill status-{{ b.status }}">{{ b.status.replace('_',' ') }}</span></td>
+                        </tr>
+                    {% else %}
+                        <tr><td colspan="5" class="text-muted">No bookings match these filters.</td></tr>
+                    {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+
+{% endblock %}
